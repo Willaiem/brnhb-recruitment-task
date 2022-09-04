@@ -1,19 +1,83 @@
+import { useForm, RegisterOptions, FieldError, UseFormRegisterReturn } from "react-hook-form";
+import isEmail from 'validator/es/lib/isEmail';
 import './App.css'
 
-const Form = () => {
+type FormFields = {
+  name: string
+  surname: string
+  email: string
+  date: string
+}
+
+type FieldProps = {
+  title: string
+  options: UseFormRegisterReturn<string> & {
+    error?: FieldError
+  }
+} & React.InputHTMLAttributes<HTMLInputElement>
+
+const Field = ({ title, options: { error, ...restOptions }, type }: FieldProps) => {
   return (
-    <form>
-      <label htmlFor="name">Name</label>
-      <input type="text" name="name" id="name" required />
+    <>
+      <label htmlFor={type}>{title}</label>
+      <input type={type} {...restOptions} />
+      {error && <p>{error.message}</p>}
+    </>
+  )
+}
 
-      <label htmlFor="surname">Surname</label>
-      <input type="text" name="surname" id="surname" required />
+const getConfiguredOptions = (customConfig?: RegisterOptions): RegisterOptions => ({
+  required: 'This field is required',
+  validate: {
+    isEmpty: v => v.trim().length > 0 || 'This field cannot be empty',
+    ...customConfig?.validate
+  },
+  ...customConfig
+})
 
-      <label htmlFor="email">Email</label>
-      <input type="email" name="email" id="email" required />
+const Form = () => {
+  const { register, handleSubmit, formState: { errors } } = useForm<FormFields>({
+    reValidateMode: "onChange",
+  });
 
-      <label htmlFor="date">Event date</label>
-      <input type="date" name="date" id="date" required />
+  const onSubmit = (data: FormFields) => {
+    console.log(data)
+  }
+
+  const fieldRegister = (name: keyof FormFields, config: RegisterOptions) => {
+    return {
+      ...register(name, config),
+      error: errors[name]
+    }
+  }
+
+  const defaultOptions = getConfiguredOptions()
+
+  const validateEmail = (email: string) => isEmail(email) || 'Invalid email - valid one: john@example.com'
+  const emailOptions = getConfiguredOptions({ validate: { isEmail: validateEmail } })
+
+  const validateDate = (stringifiedDate: string) => {
+    const date = new Date(stringifiedDate)
+
+    const isInvalidDate = date.toString() === "Invalid Date"
+    const isYearTooUnrealistic = date.getFullYear() < 1900 || date.getFullYear() > 2100
+    if (isInvalidDate) {
+      return "Invalid date - pick the correct one"
+    }
+    if (isYearTooUnrealistic) {
+      return "Invalid date - the year seems too unrealistic for this event."
+    }
+
+    return true
+  }
+  const dateOptions = getConfiguredOptions({ validate: { isValidDate: validateDate } })
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Field title="Name" options={fieldRegister("name", defaultOptions)} />
+      <Field title="Surname" options={fieldRegister("surname", defaultOptions)} />
+      <Field title="Email" type="email" options={fieldRegister("email", emailOptions)} />
+      <Field title="Event date" type="date" options={fieldRegister("date", dateOptions)} />
       <button>Submit</button>
     </form>
   )
