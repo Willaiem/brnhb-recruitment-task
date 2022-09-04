@@ -53,15 +53,15 @@ const Form = () => {
     }
   }
 
-
   const validateEmail = (email: string) => isEmail(email) || 'Invalid email - valid one: john@example.com'
   const emailOptions = getConfiguredOptions({ validate: { isEmail: validateEmail } })
 
   const validateDate = (stringifiedDate: string) => {
     const date = new Date(stringifiedDate)
+    const currentYear = date.getFullYear()
 
     const isInvalidDate = date.toString() === "Invalid Date"
-    const isYearTooUnrealistic = date.getFullYear() < 1900 || date.getFullYear() > 2100
+    const isYearTooUnrealistic = currentYear < 1900 || currentYear > 2100
     if (isInvalidDate) {
       return "Invalid date - pick the correct one"
     }
