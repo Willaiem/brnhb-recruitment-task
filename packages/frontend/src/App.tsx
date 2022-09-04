@@ -44,14 +44,15 @@ const Form = () => {
     console.log(data)
   }
 
-  const fieldRegister = (name: keyof FormFields, config: RegisterOptions) => {
+  const defaultOptions = getConfiguredOptions()
+
+  const fieldRegister = (name: keyof FormFields, config?: RegisterOptions) => {
     return {
-      ...register(name, config),
+      ...register(name, config ?? defaultOptions),
       error: errors[name]
     }
   }
 
-  const defaultOptions = getConfiguredOptions()
 
   const validateEmail = (email: string) => isEmail(email) || 'Invalid email - valid one: john@example.com'
   const emailOptions = getConfiguredOptions({ validate: { isEmail: validateEmail } })
@@ -74,8 +75,8 @@ const Form = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <Field title="Name" options={fieldRegister("name", defaultOptions)} />
-      <Field title="Surname" options={fieldRegister("surname", defaultOptions)} />
+      <Field title="Name" options={fieldRegister("name")} />
+      <Field title="Surname" options={fieldRegister("surname")} />
       <Field title="Email" type="email" options={fieldRegister("email", emailOptions)} />
       <Field title="Event date" type="date" options={fieldRegister("date", dateOptions)} />
       <button>Submit</button>
