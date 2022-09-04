@@ -1,0 +1,17 @@
+{
+  "name": "brnhb-recruitment-task",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "frontend": "pnpm --filter frontend dev",
+    "backend": "pnpm --filter backend dev",
+    "start": "pnpm --parallel dev"
+  },
+  "dependencies": {
+    "frontend": "workspace:frontend@",
+    "backend": "workspace:backend@"
+  },
+  "author": "",
+  "license": "ISC"
+}
