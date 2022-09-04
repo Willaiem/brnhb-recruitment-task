@@ -1,10 +1,10 @@
-import { useForm, RegisterOptions, FieldError, UseFormRegisterReturn } from "react-hook-form";
+import { useForm as useRHF, RegisterOptions, FieldError, UseFormRegisterReturn } from "react-hook-form";
 import isEmail from 'validator/es/lib/isEmail';
 import './App.css'
 
 type FormFields = {
-  name: string
-  surname: string
+  firstName: string
+  lastName: string
   email: string
   date: string
 }
@@ -35,28 +35,8 @@ const getConfiguredOptions = (customConfig?: RegisterOptions): RegisterOptions =
   ...customConfig
 })
 
-const Form = () => {
-  const { register, handleSubmit, formState: { errors } } = useForm<FormFields>({
-    reValidateMode: "onChange",
-  });
-
-  const onSubmit = (data: FormFields) => {
-    console.log(data)
-  }
-
-  const defaultOptions = getConfiguredOptions()
-
-  const fieldRegister = (name: keyof FormFields, config?: RegisterOptions) => {
-    return {
-      ...register(name, config ?? defaultOptions),
-      error: errors[name]
-    }
-  }
-
-  const validateEmail = (email: string) => isEmail(email) || 'Invalid email - valid one: john@example.com'
-  const emailOptions = getConfiguredOptions({ validate: { isEmail: validateEmail } })
-
-  const validateDate = (stringifiedDate: string) => {
+const validators = {
+  date(stringifiedDate: string) {
     const date = new Date(stringifiedDate)
     const currentYear = date.getFullYear()
 
@@ -70,15 +50,46 @@ const Form = () => {
     }
 
     return true
+  },
+  email: (email: string) => isEmail(email) || 'Invalid email - valid one: john@example.com'
+}
+
+const useForm = () => {
+  const { register, handleSubmit, formState: { errors } } = useRHF<FormFields>({
+    reValidateMode: "onChange",
+  });
+
+  const onSubmit = handleSubmit(data => {
+    console.log(data)
+  })
+
+  const fieldConfigs = {
+    firstName: getConfiguredOptions(),
+    lastName: getConfiguredOptions(),
+    email: getConfiguredOptions({ validate: { isValidEmail: validators.email } }),
+    date: getConfiguredOptions({ validate: { isValidDate: validators.date } }),
   }
-  const dateOptions = getConfiguredOptions({ validate: { isValidDate: validateDate } })
+
+  const fieldRegister = (name: keyof FormFields) => {
+    return {
+      ...register(name, fieldConfigs[name]),
+      error: errors[name]
+    }
+  }
+
+  return { register: fieldRegister, handleSubmit: onSubmit }
+}
+
+
+const Form = () => {
+  const { register, handleSubmit } = useForm()
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <Field title="Name" options={fieldRegister("name")} />
-      <Field title="Surname" options={fieldRegister("surname")} />
-      <Field title="Email" type="email" options={fieldRegister("email", emailOptions)} />
-      <Field title="Event date" type="date" options={fieldRegister("date", dateOptions)} />
+    <form onSubmit={handleSubmit}>
+      <Field title="First name" options={register("firstName")} />
+      <Field title="Last name" options={register("lastName")} />
+      <Field title="Email" type="email" options={register("email")} />
+      <Field title="Event date" type="date" options={register("date")} />
       <button>Submit</button>
     </form>
   )
