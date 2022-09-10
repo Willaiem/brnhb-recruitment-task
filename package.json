@@ -6,12 +6,19 @@
   "scripts": {
     "frontend": "pnpm --filter frontend dev",
     "backend": "pnpm --filter backend dev",
-    "start": "pnpm --parallel dev"
+    "start": "pnpm --parallel dev",
+    "prepare": "husky install",
+    "test": "pnpm --parallel test" 
   },
   "dependencies": {
-    "frontend": "workspace:frontend@",
-    "backend": "workspace:backend@"
+    "backend": "workspace:backend@",
+    "frontend": "workspace:frontend@"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@commitlint/cli": "^17.1.2",
+    "@commitlint/config-conventional": "^17.1.0",
+    "husky": "^8.0.0"
+  }
 }
