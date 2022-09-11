@@ -6,8 +6,8 @@ import { ServerErrorSchema } from "@shared/schemas/ServerError.schema"
 
 const prisma = new PrismaClient()
 
-const fastify = Fastify({ logger: process.env.NODE_ENV !== 'production' })
-await fastify.register(cors, {
+export const app = Fastify({ logger: process.env.NODE_ENV !== 'production' })
+await app.register(cors, {
   origin: ["http://127.0.0.1:5173", "http://localhost:5173"]
 })
 
@@ -19,7 +19,7 @@ const validateError = (err: unknown) => {
   }
 }
 
-fastify.post('/', async (req) => {
+app.post('/', async (req) => {
   try {
     const { firstName, lastName, email, eventDate } = await FormFieldsSchema.validate(req.body)
 
@@ -43,9 +43,9 @@ fastify.post('/', async (req) => {
 
 const start = async () => {
   try {
-    await fastify.listen({ port: Number(process.env.PORT) || 3000 })
+    await app.listen({ port: Number(process.env.PORT) || 3000 })
   } catch (err) {
-    fastify.log.error(err)
+    app.log.error(err)
     process.exit(1)
   }
 }
