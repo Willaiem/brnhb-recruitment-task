@@ -71,7 +71,7 @@ describe('Form component', () => {
     })
 
     it('should fill the first name input', async () => {
-      await expectFieldToBeFilledIncorrectly('First Name', 'firstName')
+      await expectFieldToBeFilledIncorrectly('First name', 'firstName')
     })
 
     it('should fill the second name input', async () => {
