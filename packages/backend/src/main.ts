@@ -15,7 +15,7 @@ const validateError = (err: unknown) => {
   try {
     return ServerErrorSchema.validateSync(err)
   } catch (_err) {
-    return { statusCode: 500, error: "Internal Server Error", message: 'Something went wrong :(' }
+    return { error: "Internal Server Error", message: 'Something went wrong :(' }
   }
 }
 
@@ -33,7 +33,7 @@ app.post('/', async (req) => {
     })
 
     await prisma.$disconnect()
-    return { statusCode: 204, message: 'User added successfully' }
+    return { message: 'User added successfully' }
   } catch (err) {
     await prisma.$disconnect()
 
