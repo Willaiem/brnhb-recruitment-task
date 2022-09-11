@@ -1,4 +1,4 @@
-import { Formik, Form as FormikForm, Field as FormikField, ErrorMessage } from 'formik';
+import { Formik, Form as FormikForm, Field as FormikField, ErrorMessage, FormikProps } from 'formik';
 import { FormFields, FormFieldsSchema } from "@shared/schemas/FormFields.schema"
 import { ServerErrorSchema } from "@shared/schemas/ServerError.schema"
 import styles from './Form.module.css'
@@ -22,12 +22,12 @@ const Field = ({ title, type, name, isInvalid, ...htmlAttrbs }: FieldProps) => {
 
 type FormStatus = "idle" | "pending" | "success" | "error"
 
-
-
-export const Form = () => {
+const useForm = () => {
   const [status, setStatus] = useState<FormStatus>('idle')
 
-  const handleSubmit = async (data: FormFields) => {
+  const initialValues = { firstName: '', lastName: '', email: '', eventDate: '' }
+
+  const onSubmit = async (data: FormFields) => {
     setStatus("pending")
 
     try {
@@ -48,27 +48,47 @@ export const Form = () => {
     }
   }
 
+  const getFormikConfig = (formikConfig: FormikProps<FormFields>) => {
+    const { isSubmitting, setFieldValue, setFieldTouched, errors, touched, handleChange } = formikConfig
+
+    const handleBlur = (field: keyof FormFields) => (e: React.FocusEvent<HTMLInputElement>) => {
+      setFieldValue(field, e.target.value.trim())
+    }
+    const onChange = (field: keyof FormFields) => (e: React.ChangeEvent<HTMLInputElement>) => {
+      setFieldTouched(field)
+      handleChange(e)
+    }
+    const getFieldProps = (field: keyof FormFields) => ({
+      onBlur: handleBlur(field),
+      isInvalid: Boolean(errors[field] && touched[field]),
+      onChange: onChange(field),
+      disabled: isSubmitting
+    })
+
+    return { getFieldProps }
+  }
+
+  return {
+    formikProps: {
+      onSubmit,
+      initialValues
+    },
+    getFormikConfig,
+    status
+  }
+}
+
+export const Form = () => {
+  const { formikProps, status, getFormikConfig } = useForm()
+
   return (
     <Formik
-      initialValues={{ firstName: '', lastName: '', email: '', eventDate: '' }}
+      {...formikProps}
       validationSchema={FormFieldsSchema}
-      onSubmit={handleSubmit}
     >
-      {({ isSubmitting, setFieldValue, setFieldTouched, errors, touched, handleChange }) => {
-        const handleBlur = (field: keyof FormFields) => (e: React.FocusEvent<HTMLInputElement>) => {
-          setFieldValue(field, e.target.value.trim())
-        }
-        const onChange = (field: keyof FormFields) => (e: React.ChangeEvent<HTMLInputElement>) => {
-          setFieldTouched(field)
-          handleChange(e)
-        }
-        const getFieldProps = (field: keyof FormFields) => ({
-          onBlur: handleBlur(field),
-          isInvalid: Boolean(errors[field] && touched[field]),
-          onChange: onChange(field),
-          disabled: isSubmitting
-        })
-
+      {(formikProps) => {
+        const { isSubmitting } = formikProps
+        const { getFieldProps } = getFormikConfig(formikProps)
 
         return (
           <FormikForm className={styles.form}>
