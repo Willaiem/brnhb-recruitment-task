@@ -1,5 +1,5 @@
-import { MOCKED_VALID_FORM_VALUES } from 'frontend/src/mocks/validFormValues'
-import { WHITESPACE } from 'frontend/src/mocks/invalidValues'
+import { MOCKED_VALID_FORM_VALUES } from '@shared/mocks/validFormValues'
+import { WHITESPACE } from '@shared/mocks/invalidValues'
 import { ERROR_MESSAGES } from 'frontend/src/mocks/errorMessages'
 
 describe('App ', () => {
