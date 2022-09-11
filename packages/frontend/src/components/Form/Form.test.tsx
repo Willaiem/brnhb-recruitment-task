@@ -1,10 +1,9 @@
-import '@testing-library/jest-dom'
 import keyboard from "@testing-library/user-event"
 import { FormFields } from '@shared/schemas/FormFields.schema'
 import { MOCKED_VALID_FORM_VALUES } from '@shared/mocks/validFormValues'
 import { WHITESPACE, EMPTY_STRING } from '@shared/mocks/invalidValues'
 import { ERROR_MESSAGES } from 'frontend/src/mocks/errorMessages'
-import { render, screen, userEvent, waitFor } from '../../utils/testingLibrarySetup'
+import { render, screen, userEvent } from '../../utils/testingLibrarySetup'
 import { Form } from './Form'
 
 const expectErrorMessageToBeNull = () => {
@@ -40,28 +39,31 @@ const expectFieldToBeFilledIncorrectly = async (text: string, key: keyof FormFie
 
 
 describe('Form component', () => {
-  describe('should fill the form with the valid values and submit it with the success message', () => {
+  it('should fill the form with the valid values and submit it with the success message', async () => {
+    render(<Form />)
 
-    beforeEach(() => {
-      render(<Form />)
-    })
+    // CASE: should fill the first name input
+    await expectFieldToBeFilledCorrectly('First name', 'firstName')
+    expectErrorMessageToBeNull()
 
-    it('should fill the first name input', async () => {
-      await expectFieldToBeFilledCorrectly('First name', 'firstName')
-      expectErrorMessageToBeNull()
-    })
-    it('should fill the last name input', async () => {
-      await expectFieldToBeFilledCorrectly('Last name', 'lastName')
-      expectErrorMessageToBeNull()
-    })
-    it('should fill the email input', async () => {
-      await expectFieldToBeFilledCorrectly('Email', 'email')
-      expectErrorMessageToBeNull()
-    })
-    it('should fill the event date input', async () => {
-      await expectFieldToBeFilledCorrectly('Event date', 'eventDate')
-      expectErrorMessageToBeNull()
-    })
+    // CASE: should fill the last name input
+    await expectFieldToBeFilledCorrectly('Last name', 'lastName')
+    expectErrorMessageToBeNull()
+
+    // CASE: should fill the email input
+    await expectFieldToBeFilledCorrectly('Email', 'email')
+    expectErrorMessageToBeNull()
+
+    // CASE: should fill the event date input
+    await expectFieldToBeFilledCorrectly('Event date', 'eventDate')
+    expectErrorMessageToBeNull()
+
+    // CASE: should submit the form and show the success message
+    const submitButton = screen.getByText<HTMLButtonElement>('Submit')
+
+    await userEvent.click(submitButton)
+
+    await screen.findByText('Added successfully!')
   })
 
   describe('should fill the form with the incorrect values and show the errors', () => {
@@ -77,9 +79,11 @@ describe('Form component', () => {
     it('should fill the second name input', async () => {
       await expectFieldToBeFilledIncorrectly("Last name", "lastName")
     })
+
     it('should fill the email input', async () => {
       await expectFieldToBeFilledCorrectly('Email', 'email')
     })
+
     it('should fill the event date input', async () => {
       await expectFieldToBeFilledCorrectly('Event date', 'eventDate')
     })
