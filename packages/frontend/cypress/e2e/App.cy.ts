@@ -7,7 +7,7 @@ describe('App ', () => {
     cy.visit('http://localhost:5173/')
   })
 
-  it('should fill the form with the valid values', () => {
+  it('should fill the form with the valid values, submit it and display the loading message', () => {
     cy.get("input#firstName").type(MOCKED_VALID_FORM_VALUES.firstName)
     cy.get('body').then(bodyEl => {
       const isErrorMessageInBody = bodyEl.find('[role=alert]').length > 0
@@ -32,6 +32,14 @@ describe('App ', () => {
       const isErrorMessageInBody = bodyEl.find('[role=alert]').length > 0
       expect(isErrorMessageInBody).to.be.false
     })
+
+    cy.intercept('POST', '/').as('postRequest')
+
+    cy.get("button[type=submit]").click()
+    cy.get("p[role=loading]")
+
+    cy.wait('@postRequest')
+    cy.get("p[role=loading]")
   })
 
   it('should fill the form with the invalid values', () => {
