@@ -2,7 +2,7 @@ import Fastify from 'fastify'
 import cors from '@fastify/cors'
 import { PrismaClient } from '@prisma/client'
 import { FormFieldsSchema } from "@shared/schemas/FormFields.schema"
-import { ServerErrorSchema } from "@shared/schemas/ServerError.schema"
+import { parseError } from '@shared/utils/parseError'
 
 const prisma = new PrismaClient()
 
@@ -37,7 +37,7 @@ app.post('/', async (req) => {
   } catch (err) {
     await prisma.$disconnect()
 
-    throw validateError(err)
+    throw parseError(err)
   }
 })
 
