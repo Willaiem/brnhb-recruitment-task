@@ -8,7 +8,8 @@
     "backend": "pnpm --filter backend dev",
     "start": "pnpm --parallel dev",
     "prepare": "husky install",
-    "test": "pnpm --parallel test" 
+    "test": "pnpm --parallel test",
+    "postinstall": "pnpm --filter backend prisma:generate"
   },
   "dependencies": {
     "backend": "workspace:backend@",
