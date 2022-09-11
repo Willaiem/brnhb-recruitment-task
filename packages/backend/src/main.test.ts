@@ -3,10 +3,9 @@ import { ServerSuccessSchema } from '@shared/schemas/ServerSuccess.schema'
 import { ServerErrorSchema } from '@shared/schemas/ServerError.schema'
 import { EMPTY_STRING, WHITESPACE } from '@shared/mocks/invalidValues'
 import { MOCKED_VALID_FORM_VALUES } from '@shared/mocks/validFormValues'
+import { SERVER_SUCCESS_RESPONSE, SERVER_ERROR_RESPONSE } from '@shared/mocks/serverResponses'
 import { app } from './main'
 
-const SERVER_SUCCESS_RESPONSE = { message: 'User added successfully' }
-const SERVER_ERROR_RESPONSE = { error: "Internal Server Error", message: 'Something went wrong :(' }
 
 const expectSuccessResponse = async (response: Response) => {
   expect(response.statusCode).toBe(200)
