@@ -42,6 +42,10 @@ const expectFieldToBeFilledIncorrectly = async (text: string, key: keyof FormFie
 describe('Form component', () => {
   describe('should fill the form with the valid values and submit it with the success message', () => {
 
+    beforeEach(() => {
+      render(<Form />)
+    })
+
     it('should fill the first name input', async () => {
       await expectFieldToBeFilledCorrectly('First name', 'firstName')
       expectErrorMessageToBeNull()
@@ -62,8 +66,9 @@ describe('Form component', () => {
 
   describe('should fill the form with the incorrect values and show the errors', () => {
 
-  it('should fill the form with the incorrect values and show the errors', async () => {
-    render(<Form />)
+    beforeEach(() => {
+      render(<Form />)
+    })
 
     it('should fill the first name input', async () => {
       await expectFieldToBeFilledIncorrectly('First Name', 'firstName')
