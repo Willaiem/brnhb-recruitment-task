@@ -1,8 +1,8 @@
+import { useEffect, useState } from 'react';
 import { Formik, Form as FormikForm, Field as FormikField, ErrorMessage, FormikProps } from 'formik';
 import { FormFields, FormFieldsSchema } from "@shared/schemas/FormFields.schema"
-import { ServerErrorSchema } from "@shared/schemas/ServerError.schema"
+import { parseError } from '@shared/utils/parseError'
 import styles from './Form.module.css'
-import { useState } from 'react';
 
 type FieldProps = { isInvalid: boolean } & React.InputHTMLAttributes<HTMLInputElement>
 
@@ -27,6 +27,23 @@ const useForm = () => {
 
   const initialValues = { firstName: '', lastName: '', email: '', eventDate: '' }
 
+  useEffect(() => {
+    if (status === "idle" || status === "pending") {
+      return
+    }
+
+    const MS_TO_RESET_STATUS = 3000
+
+    const timeout = setTimeout(() => {
+      clearTimeout(timeout)
+      setStatus('idle')
+    }, MS_TO_RESET_STATUS)
+
+    return () => {
+      clearTimeout(timeout)
+    }
+  }, [status])
+
   const onSubmit = async (data: FormFields) => {
     setStatus("pending")
 
@@ -42,8 +59,8 @@ const useForm = () => {
 
       setStatus("success")
     } catch (err) {
-      const { message } = await ServerErrorSchema.validate(err)
-      console.error(message)
+      const { error, message } = parseError(err)
+      console.error(`SERVER ERROR: \n MESSAGE: ${message} \n ERROR: ${error}`)
       setStatus('error')
     }
   }
@@ -98,9 +115,25 @@ export const Form = () => {
             <Field type="date" title="Event date" name="eventDate" {...getFieldProps('eventDate')} />
 
             <button className={styles.button} type="submit" disabled={isSubmitting}>Submit</button>
+
+            <LoadingIndicator status={status} />
           </FormikForm>
         )
       }}
     </Formik>
+  )
+}
+
+type LoadingIndicatorProps = {
+  status: FormStatus
+}
+
+export const LoadingIndicator = ({ status }: LoadingIndicatorProps) => {
+  return (
+    <>
+      {status === "pending" ? <p className={`${styles.indicator} ${styles.pending}`} role="loading">Adding - please wait...</p> : null}
+      {status === "success" ? <p className={`${styles.indicator} ${styles.success}`} role="loading">Added successfully!</p> : null}
+      {status === "error" ? <p className={`${styles.indicator} ${styles.error}`} role="loading">Something went wrong - please try again.</p> : null}
+    </>
   )
 }
