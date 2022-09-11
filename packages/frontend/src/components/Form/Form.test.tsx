@@ -1,10 +1,8 @@
 import '@testing-library/jest-dom'
 import keyboard from "@testing-library/user-event"
 import { FormFields } from '@shared/schemas/FormFields.schema'
-import { MOCKED_VALID_FORM_VALUES } from '../../mocks/validFormValues'
-import { render, screen, userEvent } from '../../utils/testingLibrarySetup'
-import { Form } from './Form'
-import { WHITESPACE, EMPTY_STRING } from 'frontend/src/mocks/invalidValues'
+import { MOCKED_VALID_FORM_VALUES } from '@shared/mocks/validFormValues'
+import { WHITESPACE, EMPTY_STRING } from '@shared/mocks/invalidValues'
 import { ERROR_MESSAGES } from 'frontend/src/mocks/errorMessages'
 
 const expectErrorMessageToBeNull = () => {
