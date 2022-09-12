@@ -45,7 +45,7 @@ eventdate DATE
 - ``{root}`` - with the password
 - ``{5432}`` - with the default port for the database
 - ``{my_database}`` - with the name of the database to connect
-4. Save the configuration and proceed to the Installation step.
+2. Save the configuration and proceed to the Installation step.
 
 ## Installation
 1. In the root directory, run the following command:
