@@ -1,5 +1,11 @@
 # brnhb-recruitment-task
- 
+
+## Used stack:
+- TypeScript
+- React
+- Node.js (Fastify)
+- Vitest
+- Vite 
 
 ## System Requirements
 - git v2.13 or greater
