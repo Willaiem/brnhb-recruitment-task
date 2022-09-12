@@ -9,6 +9,9 @@
     "start": "pnpm --parallel dev",
     "prepare": "husky install",
     "test": "pnpm --parallel test",
+    "test:frontend": "pnpm --filter frontend test",
+    "test:backend": "pnpm --filter backend test",
+    "test:cypress": "pnpm --filter frontend cypress",
     "postinstall": "pnpm --filter backend prisma:generate"
   },
   "dependencies": {
