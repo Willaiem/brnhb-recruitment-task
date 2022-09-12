@@ -34,10 +34,7 @@ eventdate DATE
 ```
 
 ### Setup the environment variables (needed for Prisma):
-1. Create the .env file in the packages/backend directory.
-2. Paste this line:
-``DATABASE_URL="postgresql://{my_user}:{root}@localhost:{5432}/{my_database}?schema=public"``
-3. Replace the following placeholders:
+1. Replace the following placeholders:
 - ``{my_user}`` - with the username for the admin
 - ``{root}`` - with the password
 - ``{5432}`` - with the default port for the database
